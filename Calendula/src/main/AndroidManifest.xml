@@ -211,6 +211,10 @@
             android:noHistory="true"
             android:showOnLockScreen="true"/>
 
+        <activity
+            android:name=".activities.PatientSummaryActivity"
+            android:label="@string/title_activity_patient_summary"/>
+
     </application>
 
 </manifest>

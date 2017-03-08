@@ -63,6 +63,7 @@ import es.usc.citius.servando.calendula.util.ScreenUtils;
  */
 public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountHeader.OnAccountHeaderListener {
 
+    public static final int PATIENT_SUMMARY = 13;
     public static final int HOME = 0;
     public static final int ROUTINES = 1;
     public static final int MEDICINES = 2;
@@ -137,6 +138,8 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                 .withScrollToTopAfterClick(true)
                 .withSavedInstance(savedInstanceState);
 
+        b.addDrawerItems(new PrimaryDrawerItem().withName("PATIENT SUMMARY")
+                .withIcon(IconUtils.icon(home, CommunityMaterial.Icon.cmd_account, R.color.black).alpha(110)).withIdentifier(PATIENT_SUMMARY));
         b.addDrawerItems(
                 new PrimaryDrawerItem()
                         .withName(R.string.title_home)
@@ -208,6 +211,10 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
         int identifier = iDrawerItem.getIdentifier();
 
         switch (identifier) {
+            case PATIENT_SUMMARY:
+                launchActivity(new Intent(home, PatientSummaryActivity.class));
+                drawer.setSelection(HOME, false);
+                break;
             case HOME:
                 home.showPagerItem(0, false);
                 break;
