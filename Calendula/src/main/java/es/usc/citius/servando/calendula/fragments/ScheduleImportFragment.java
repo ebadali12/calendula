@@ -31,7 +31,6 @@ import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -48,11 +47,11 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.doomonafireball.betterpickers.numberpicker.NumberPickerBuilder;
-import com.doomonafireball.betterpickers.numberpicker.NumberPickerDialogFragment;
-import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
-import com.doomonafireball.betterpickers.recurrencepicker.EventRecurrence;
-import com.doomonafireball.betterpickers.recurrencepicker.RecurrencePickerDialog;
+import com.codetroopers.betterpickers.numberpicker.NumberPickerBuilder;
+import com.codetroopers.betterpickers.numberpicker.NumberPickerDialogFragment;
+import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
+import com.codetroopers.betterpickers.recurrencepicker.EventRecurrence;
+import com.codetroopers.betterpickers.recurrencepicker.RecurrencePickerDialogFragment;
 import com.google.ical.values.DateTimeValueImpl;
 import com.google.ical.values.DateValue;
 import com.google.ical.values.Frequency;
@@ -61,6 +60,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -85,23 +86,21 @@ import es.usc.citius.servando.calendula.persistence.Routine;
 import es.usc.citius.servando.calendula.persistence.Schedule;
 import es.usc.citius.servando.calendula.persistence.ScheduleItem;
 import es.usc.citius.servando.calendula.persistence.ScheduleItemComparator;
+import es.usc.citius.servando.calendula.util.LogUtil;
 
 /**
  * Created by joseangel.pineiro on 12/11/13.
  */
 public class ScheduleImportFragment extends Fragment
-        implements NumberPickerDialogFragment.NumberPickerDialogHandler,
-        RecurrencePickerDialog.OnRecurrenceSetListener, RadialTimePickerDialog.OnTimeSetListener {
-
-    public static final String TAG = ScheduleImportFragment.class.getName();
+        implements NumberPickerDialogFragment.NumberPickerDialogHandlerV2,
+        RecurrencePickerDialogFragment.OnRecurrenceSetListener, RadialTimePickerDialogFragment.OnTimeSetListener {
 
     public static final String ARG_PRESCRIPTION = "ARG_PRESCRIPTION";
-
     public static final int REF_DIALOG_HOURLY_INTERVAL = 1;
     public static final int REF_DIALOG_ROUTINE_INTERVAL = 2;
     public static final int REF_DIALOG_CYCLE_DAYS = 3;
     public static final int REF_DIALOG_CYCLE_REST = 4;
-
+    private static final String TAG = "ScheduleImportFragment";
     final Frequency[] FREQ =
             new Frequency[]{Frequency.DAILY, Frequency.WEEKLY, Frequency.MONTHLY};
     public int selectedScheduleIdx;
@@ -174,7 +173,7 @@ public class ScheduleImportFragment extends Fragment
         prescriptionWrapper = PrescriptionWrapper.from(h);
 
         if (prescriptionWrapper != null && prescriptionWrapper.s != null && (prescriptionWrapper.cn != null || prescriptionWrapper.g != null)) {
-            Log.d(TAG, "Wrapper: " + prescriptionWrapper.cn + "," + (prescriptionWrapper.s.d));
+            LogUtil.d(TAG, "Wrapper: " + prescriptionWrapper.cn + "," + (prescriptionWrapper.s.d));
             updatePrescriptionValues();
             Schedule s = findByPrescriptionWrapper(prescriptionWrapper);
             if (s != null) {
@@ -188,7 +187,7 @@ public class ScheduleImportFragment extends Fragment
             } else {
                 setNew(true);
                 // changes = changes(s, prescriptionWrapper);
-                Log.d(TAG, "Schedule not found found");
+                LogUtil.d(TAG, "Schedule not found found");
             }
         }
 
@@ -283,39 +282,38 @@ public class ScheduleImportFragment extends Fragment
     }
 
     @Override
-    public void onDialogNumberSet(int reference, int number, double decimal, boolean isNegative,
-                                  double fullNumber) {
+    public void onDialogNumberSet(int reference, BigInteger number, double decimal, boolean isNegative, BigDecimal fullNumber) {
 
         if (reference == REF_DIALOG_ROUTINE_INTERVAL) {
-            intervalEditText.setText("" + number);
-            schedule.rule().setInterval(number);
+            intervalEditText.setText(Integer.toString(number.intValue()));
+            schedule.rule().setInterval(number.intValue());
         } else if (reference == REF_DIALOG_HOURLY_INTERVAL) {
-            hourlyIntervalEditText.setText("" + number);
+            hourlyIntervalEditText.setText(Integer.toString(number.intValue()));
             schedule.rule().setFrequency(Frequency.HOURLY);
-            schedule.rule().setInterval(number);
+            schedule.rule().setInterval(number.intValue());
         } else if (reference == REF_DIALOG_CYCLE_DAYS) {
             periodValue.setText(String.valueOf(number));
-            cycleDays = number;
+            cycleDays = number.intValue();
             if (cycleRest > 0) {
                 schedule.setCycle(cycleDays, cycleRest);
             }
         } else if (reference == REF_DIALOG_CYCLE_REST) {
             periodRest.setText(String.valueOf(number));
-            cycleRest = number;
+            cycleRest = number.intValue();
             if (cycleDays > 0) {
                 schedule.setCycle(cycleDays, cycleRest);
             }
         }
     }
 
-    @Override
-    public void onTimeSet(RadialTimePickerDialog radialTimePickerDialog, int hour,
-                          int minute) {
 
+    @Override
+    public void onTimeSet(RadialTimePickerDialogFragment dialog, int hour, int minute) {
         String time = new LocalTime(hour, minute).toString("kk:mm");
         hourlyIntervalFrom.setText(getString(R.string.first_intake) + ": " + time);
         schedule.setStartTime(new LocalTime(hour, minute));
     }
+
 
     @Override
     public void onRecurrenceSet(String s) {
@@ -329,14 +327,14 @@ public class ScheduleImportFragment extends Fragment
         event.parse(s);
         event.setStartDate(startDate);
 
-        Log.d(TAG, "OnRecurrenceSet: " + event.startDate);
+        LogUtil.d(TAG, "OnRecurrenceSet: " + event.startDate);
 
         schedule.setRepetition(new RepetitionRule("RRULE:" + s));
         setScheduleStart(schedule.start());
         LocalDate end = schedule.end();
-        Log.d(TAG, "ICAL: " + schedule.rule().toIcal());
+        LogUtil.d(TAG, "ICAL: " + schedule.rule().toIcal());
         setScheduleEnd(end);
-        Log.d(TAG, "ICAL: " + schedule.rule().toIcal());
+        LogUtil.d(TAG, "ICAL: " + schedule.rule().toIcal());
         ruleText.setText(getCurrentSchedule());
     }
 
@@ -360,13 +358,13 @@ public class ScheduleImportFragment extends Fragment
 
     public Schedule findByPrescriptionWrapper(PrescriptionWrapper pw) {
         if (pw.cn != null) {
-            Log.d("FindByPW", "Prescription: " + pw.cn);
+            LogUtil.d(TAG, "Prescription: " + pw.cn);
             Medicine m = DB.medicines().findOneBy(Medicine.COLUMN_CN, pw.cn);
             if (m != null) {
                 return DB.schedules().findScannedByMedicine(m);
             }
         } else if (pw.isGroup) {
-            Log.d("FindByPW", "Group: " + pw.group.getId());
+            LogUtil.d(TAG, "Group: " + pw.group.getId());
             Medicine m = DB.medicines().findOneBy(Medicine.COLUMN_HG, pw.group.getId());
             if (m != null) {
                 return DB.schedules().findScannedByMedicine(m);
@@ -383,7 +381,7 @@ public class ScheduleImportFragment extends Fragment
 
         if (pw.s.d == 0.0) { // || pw.s.d >= 2.0
             // dose is zero
-            Log.d(TAG, "Item dose is ambiguous");
+            LogUtil.d(TAG, "Item dose is ambiguous");
             changes.add("• " + getString(R.string.scan_dose_zero_msg));
         }
 
@@ -393,7 +391,7 @@ public class ScheduleImportFragment extends Fragment
             for (ScheduleItem i : items) {
                 if (i.dose() != pw.s.d && pw.s.d > 0) {
                     // dose is different
-                    Log.d(TAG, "Item dose is different [" + i.dose() + ", " + pw.s.d + ", " + items.size() + "]");
+                    LogUtil.d(TAG, "Item dose is different [" + i.dose() + ", " + pw.s.d + ", " + items.size() + "]");
                     changes.add("• " + getString(R.string.scan_dose_changed_msg));
                     break;
                 }
@@ -402,7 +400,7 @@ public class ScheduleImportFragment extends Fragment
                 int times = 24 / interval;
                 if (times != items.size()) {
                     // times by day is different
-                    Log.d(TAG, "Times by day is different[" + times + ", " + items.size() + "]");
+                    LogUtil.d(TAG, "Times by day is different[" + times + ", " + items.size() + "]");
                     changes.add("• " + getString(R.string.scan_frequency_changed_msg, items.size(), times));
                 }
             }
@@ -410,11 +408,11 @@ public class ScheduleImportFragment extends Fragment
             if (s.dose() != pw.s.d && pw.s.d > 0) {
                 // dose is different
                 changes.add("• " + getString(R.string.scan_dose_changed_msg));
-                Log.d(TAG, "Dose is different [" + s.dose() + ", " + pw.s.d + "]");
+                LogUtil.d(TAG, "Dose is different [" + s.dose() + ", " + pw.s.d + "]");
             }
             if (s.rule().interval() != interval) {
                 changes.add("• " + getString(R.string.scan_interval_changed_msg, s.rule().interval(), interval));
-                Log.d(TAG, "Interval is different[" + interval + ", " + s.rule().interval() + "]");
+                LogUtil.d(TAG, "Interval is different[" + interval + ", " + s.rule().interval() + "]");
             }
         }
 
@@ -513,7 +511,7 @@ public class ScheduleImportFragment extends Fragment
                     schedule.setType(Schedule.SCHEDULE_TYPE_EVERYDAY);
                 }
 
-                Log.d(TAG, "All days selected: " + allDaysSelected + ", repeatType: " + schedule.type());
+                LogUtil.d(TAG, "All days selected: " + allDaysSelected + ", repeatType: " + schedule.type());
             }
         };
 
@@ -529,8 +527,8 @@ public class ScheduleImportFragment extends Fragment
     void showIntervalPickerDIalog() {
         NumberPickerBuilder npb =
                 new NumberPickerBuilder().setDecimalVisibility(NumberPicker.INVISIBLE)
-                        .setMinNumber(1)
-                        .setMaxNumber(31)
+                        .setMinNumber(BigDecimal.ONE)
+                        .setMaxNumber(BigDecimal.valueOf(31))
                         .setPlusMinusVisibility(NumberPicker.INVISIBLE)
                         .setFragmentManager(getChildFragmentManager())
                         .setTargetFragment(this).setReference(REF_DIALOG_ROUTINE_INTERVAL)
@@ -558,16 +556,16 @@ public class ScheduleImportFragment extends Fragment
     }
 
     void showRecurrencePickerDialog() {
-        RecurrencePickerDialog dialog = new RecurrencePickerDialog();
+        RecurrencePickerDialogFragment dialog = new RecurrencePickerDialogFragment();
 
         DateTime start = schedule.start() != null ? schedule.start().toDateTimeAtStartOfDay()
                 : DateTime.now().withTimeAtStartOfDay();
 
         Bundle b = new Bundle();
 
-        b.putString(RecurrencePickerDialog.BUNDLE_RRULE,
+        b.putString(RecurrencePickerDialogFragment.BUNDLE_RRULE,
                 schedule.rule().toIcal().replace("RRULE:", ""));
-        b.putLong(RecurrencePickerDialog.BUNDLE_START_TIME_MILLIS, DateTime.now().getMillis());
+        b.putLong(RecurrencePickerDialogFragment.BUNDLE_START_TIME_MILLIS, DateTime.now().getMillis());
         //b.putString(RecurrencePickerDialog.BUNDLE_TIME_ZONE, t.timezone);
 
         dialog.setArguments(b);
@@ -600,7 +598,7 @@ public class ScheduleImportFragment extends Fragment
             } else {
 
                 float dose = doses.length > 0 ? doses[0] : 1;
-                Log.d(TAG, "Creating new scheduleItem with dose " + dose + ", " + Arrays.toString(doses));
+                LogUtil.d(TAG, "Creating new scheduleItem with dose " + dose + ", " + Arrays.toString(doses));
                 s = new ScheduleItem(null, (i < routines.size()) ? routines.get(i) : null, dose);
             }
 
@@ -703,9 +701,9 @@ public class ScheduleImportFragment extends Fragment
                         String names[] = getUpdatedRoutineNames();
                         updateRoutineSelectionAdapter(entryView, rSpinner, names);
 
-                        Log.d(TAG, "Routine name: " + r.name());
-                        Log.d(TAG, "Routine time: " + r.time().toString("hh:mm"));
-                        Log.d(TAG, "Names: " + Arrays.toString(names));
+                        LogUtil.d(TAG, "Routine name: " + r.name());
+                        LogUtil.d(TAG, "Routine time: " + r.time().toString("hh:mm"));
+                        LogUtil.d(TAG, "Names: " + Arrays.toString(names));
 
                         int selection = Arrays.asList(names).indexOf(r.name());
                         rSpinner.setSelection(selection);
@@ -724,9 +722,9 @@ public class ScheduleImportFragment extends Fragment
 
         if (prescriptionWrapper.isGroup) {
             HomogeneousGroup g = DB.drugDB().homogeneousGroups().findOneBy(HomogeneousGroup.COLUMN_HOMOGENEOUS_GROUP_ID, prescriptionWrapper.group.getHomogeneousGroupID());
-            p = dbMgr.expected(g.getName(), g.getName());
+            p = dbMgr.expectedPresentation(g.getName(), g.getName());
         } else {
-            p = dbMgr.expected(DB.drugDB().prescriptions().findByCn(String.valueOf(prescriptionWrapper.prescription.getCode())));
+            p = dbMgr.expectedPresentation(DB.drugDB().prescriptions().findByCn(String.valueOf(prescriptionWrapper.prescription.getCode())));
         }
 
         final DosePickerFragment dpf = getDosePickerFragment(p, item, null);
@@ -737,7 +735,7 @@ public class ScheduleImportFragment extends Fragment
                     new LiquidDosePickerFragment.OnDoseSelectedListener() {
                         @Override
                         public void onDoseSelected(double dose) {
-                            Log.d(TAG, "Set dose "
+                            LogUtil.d(TAG, "Set dose "
                                     + dose
                                     + " to item "
                                     + item.routine().name()
@@ -762,9 +760,9 @@ public class ScheduleImportFragment extends Fragment
         Presentation p;
 
         if (prescriptionWrapper.isGroup) {
-            p = dbMgr.expected(prescriptionWrapper.group.getName(), prescriptionWrapper.group.getName());
+            p = dbMgr.expectedPresentation(prescriptionWrapper.group.getName(), prescriptionWrapper.group.getName());
         } else {
-            p = dbMgr.expected(DB.drugDB().prescriptions().findByCn(String.valueOf(prescriptionWrapper.prescription.getCode())));
+            p = dbMgr.expectedPresentation(DB.drugDB().prescriptions().findByCn(String.valueOf(prescriptionWrapper.prescription.getCode())));
         }
 
 
@@ -788,7 +786,7 @@ public class ScheduleImportFragment extends Fragment
 
     void checkSelectedDays(View rootView, boolean[] days) {
 
-        Log.d(TAG, "Checking selected days: " + Arrays.toString(days));
+        LogUtil.d(TAG, "Checking selected days: " + Arrays.toString(days));
         schedule.setDays(days);
 
         TextView mo = ((TextView) rootView.findViewById(R.id.day_mo));
@@ -846,7 +844,7 @@ public class ScheduleImportFragment extends Fragment
     private void updatePrescriptionValues() {
         ScheduleWrapper sw = prescriptionWrapper.s;
 
-        Log.d(TAG, "UpdatePrescriptionValues: " + prescriptionWrapper.g + ", " + sw.p + ", " + sw.d + ", " + sw.i);
+        LogUtil.d(TAG, "UpdatePrescriptionValues: " + prescriptionWrapper.g + ", " + sw.p + ", " + sw.d + ", " + sw.i);
 
         if (sw.p != -1) {
             int times = 24 / sw.p;
@@ -856,7 +854,7 @@ public class ScheduleImportFragment extends Fragment
             for (int i = 0; i < doses.length; i++) {
                 doses[i] = dose > 0 ? dose : 1;
             }
-            Log.d(TAG, " Values: " + timesPerDay + ", " + dose);
+            LogUtil.d(TAG, " Values: " + timesPerDay + ", " + dose);
         } else if (sw.i != -1) {
             hasEnd = true;
             daysToEnd = sw.i;
@@ -867,19 +865,19 @@ public class ScheduleImportFragment extends Fragment
                 doses[i] = dose > 0 ? dose : 1;
             }
         } else {
-            Log.d(TAG, "Period not avilable");
+            LogUtil.d(TAG, "Period not avilable");
         }
 
-        Log.d(TAG, "Updated prescription values " + (prescriptionWrapper.g != null ? prescriptionWrapper.g : prescriptionWrapper.cn)
+        LogUtil.d(TAG, "Updated prescription values " + (prescriptionWrapper.g != null ? prescriptionWrapper.g : prescriptionWrapper.cn)
                 + "," + timesPerDay + ", " + Arrays.toString(doses));
     }
 
     private void updateScheduleType(int type, boolean createNewSchedule) {
 
-        Log.d(TAG, "updateScheduleType :" + type);
+        LogUtil.d(TAG, "updateScheduleType :" + type);
 
         if (createNewSchedule || schedule == null) {
-            Log.d(TAG, "Creating new schedule");
+            LogUtil.d(TAG, "Creating new schedule");
             schedule = new Schedule();
         }
 
@@ -902,7 +900,7 @@ public class ScheduleImportFragment extends Fragment
                 break;
         }
 
-        Log.d(TAG, "Set schedule type: " + schedule.type());
+        LogUtil.d(TAG, "Set schedule type: " + schedule.type());
 
 
     }
@@ -1004,7 +1002,7 @@ public class ScheduleImportFragment extends Fragment
 
     private void setupForKnownSchedule(View rootView) {
 
-        Log.d(TAG, "Setup for known schedule: id = " + schedule.getId());
+        LogUtil.d(TAG, "Setup for known schedule: id = " + schedule.getId());
 
 
         int type = ScheduleTypeFragment.TYPE_ROUTINES;
@@ -1015,7 +1013,7 @@ public class ScheduleImportFragment extends Fragment
             type = ScheduleTypeFragment.TYPE_PERIOD;
         }
 
-        Log.d(TAG, "Setup for known schedule:  " + type);
+        LogUtil.d(TAG, "Setup for known schedule:  " + type);
 
         boxTimesByDay.setVisibility(View.GONE);
         boxTimetable.setVisibility(View.GONE);
@@ -1055,8 +1053,8 @@ public class ScheduleImportFragment extends Fragment
             public void onClick(View v) {
                 NumberPickerBuilder npb =
                         new NumberPickerBuilder().setDecimalVisibility(NumberPicker.INVISIBLE)
-                                .setMinNumber(1)
-                                .setMaxNumber(100)
+                                .setMinNumber(BigDecimal.ONE)
+                                .setMaxNumber(BigDecimal.valueOf(100))
                                 .setPlusMinusVisibility(NumberPicker.INVISIBLE)
                                 .setFragmentManager(getChildFragmentManager())
                                 .setTargetFragment(ScheduleImportFragment.this)
@@ -1071,8 +1069,8 @@ public class ScheduleImportFragment extends Fragment
             public void onClick(View v) {
                 NumberPickerBuilder npb =
                         new NumberPickerBuilder().setDecimalVisibility(NumberPicker.INVISIBLE)
-                                .setMinNumber(1)
-                                .setMaxNumber(100)
+                                .setMinNumber(BigDecimal.ONE)
+                                .setMaxNumber(BigDecimal.valueOf(100))
                                 .setPlusMinusVisibility(NumberPicker.INVISIBLE)
                                 .setFragmentManager(getChildFragmentManager())
                                 .setTargetFragment(ScheduleImportFragment.this)
@@ -1104,9 +1102,9 @@ public class ScheduleImportFragment extends Fragment
 
                 DateTime time = schedule.startTime().toDateTimeToday();
 
-                RadialTimePickerDialog timePickerDialog =
-                        RadialTimePickerDialog.newInstance(ScheduleImportFragment.this,
-                                time.getHourOfDay(), time.getMinuteOfHour(), true);
+                RadialTimePickerDialogFragment timePickerDialog = new RadialTimePickerDialogFragment()
+                        .setOnTimeSetListener(ScheduleImportFragment.this)
+                        .setStartTime(time.getHourOfDay(), time.getMinuteOfHour());
                 timePickerDialog.show(getChildFragmentManager(), "111");
             }
         });
@@ -1183,7 +1181,7 @@ public class ScheduleImportFragment extends Fragment
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                                   int dayOfMonth) {
-                                Log.d(TAG, year + " " + monthOfYear);
+                                LogUtil.d(TAG, year + " " + monthOfYear);
                                 LocalDate d = new LocalDate(year, monthOfYear + 1, dayOfMonth);
                                 setScheduleStart(d);
                             }
@@ -1428,7 +1426,7 @@ public class ScheduleImportFragment extends Fragment
                     updateEntryTime(null, entryView);
                     showAddNewRoutineDialog(entryView);
                 }
-                Log.d(TAG, "Updated routine to "
+                LogUtil.d(TAG, "Updated routine to "
                         + (r != null ? r.name() : "NULL")
                         + " on item "
                         + item.getId());
@@ -1460,7 +1458,7 @@ public class ScheduleImportFragment extends Fragment
 
     private void logScheduleItems() {
         for (ScheduleItem si : sItems) {
-            Log.d("TAG", (si.routine() != null ? si.routine().name() : "NONE")
+            LogUtil.d(TAG, (si.routine() != null ? si.routine().name() : "NONE")
                     + ", "
                     + si.dose()
                     + " ****************************");

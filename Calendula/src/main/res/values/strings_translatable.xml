@@ -182,7 +182,6 @@ Please carefully read the leaflet or ask your pharmacist before you get behind t
 <string name="schedule_repeat_type_everyday">"Every day"</string>
 <string name="schedule_repeat_type_some_week_days">"Some week days"</string>
 <string name="schedule_repeat_type_interval">"Interval"</string>
-<string name="schedule_repeat_frequency_hours">"hours"</string>
 <string name="schedule_repeat_frequency_days">"days"</string>
 <string name="schedule_repeat_frequency_weeks">"weeks"</string>
 <string name="schedule_repeat_frequency_months">"months"</string>
@@ -226,7 +225,7 @@ Routines are times when you need to take meds, like breakfast or dinner. You can
 Add your meds to the kit, and you will have easy access to leaflets and warnings."</string>
 <string name="schedules_list_empty_text">"There are no schedules yet.
 
-Add your schedules here and let we just notify you!"</string>
+Add your schedules here and let us just notify you!"</string>
 <string name="about_description"><![CDATA[
 <br/><br/>
 Calendula is developed by the Research Centre for Information Technologies of the USC (<a href=\'http://citius.usc.es\'>CITIUS</a>)
@@ -433,6 +432,27 @@ If you choose not to download it, some of your medicines' information may be los
 <string name="sort_by_presentation">"Presentation"</string>
 <string name="action_sort">"Sort"</string>
 <string name="sort_by_alerts">"Alerts"</string>
+<string name="title_activity_pickup_calendar_short">"Pickups"</string>
+<string name="calendar_patient_all">"All"</string>
+<string name="calendar_updating">"Updating calendar…"</string>
+<string name="best_date_recommendation_title">"Advice"</string>
+<string name="best_single_day_message">"Visit your pharmacy %1$s and you will be able to pick up %2$s medicines at the same time:"</string>
+<string name="best_single_day_message_one_med">"Visit your pharmacy %1$s to pick up:"</string>
+<string name="best_single_day_message_after_pending">"Afterwards, you could go again %1$s to pick up %2$s medicines at the same time:"</string>
+<string name="best_single_day_message_after_pending_one_med">"Afterwards, you could go again %1$s and pick up:"</string>
+<string name="pending_meds_msg">"There's medicines pending pick-up. Please visit your pharmacy as soon as possible:"</string>
+<string name="best_date_format">"'on' MMMM d '('EEEE')'"</string>
+<string name="best_date_reminder">"Reminder"</string>
+<string name="calendar_pickup_reminder_one_day_before">"1 day before"</string>
+<string name="calendar_pickup_reminder_two_days_before">"2 days before"</string>
+<string name="calendar_pickup_reminder_three_days_before">"3 days before"</string>
+<string name="calendar_no_medicines_to_pick_up">"There's no medicines to pick up"</string>
+<string name="ok">"OK"</string>
+<string name="stock">"Stock"</string>
+<string name="expand">"Expand"</string>
+<string name="show_pickups">"Show pickups"</string>
+<string name="help">"Help"</string>
+    <string name="title_activity_medicines_search">Medicine search</string>
     <string name="title_activity_patient_summary">Patient summary</string>
     <string name="current_medicines_no_medicines">Patient is not taking any medicines right now.</string>
     <string name="patient_current_medicines">Currently taking these medicines:</string>

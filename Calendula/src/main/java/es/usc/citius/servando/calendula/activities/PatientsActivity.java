@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +41,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -51,6 +52,7 @@ import es.usc.citius.servando.calendula.database.DB;
 import es.usc.citius.servando.calendula.events.PersistenceEvents;
 import es.usc.citius.servando.calendula.persistence.Patient;
 import es.usc.citius.servando.calendula.util.AvatarMgr;
+import es.usc.citius.servando.calendula.util.LogUtil;
 import es.usc.citius.servando.calendula.util.ScreenUtils;
 import es.usc.citius.servando.calendula.util.Snack;
 
@@ -81,15 +83,15 @@ public class PatientsActivity extends CalendulaActivity implements GridView.OnIt
     }
 
     // Method called from the event bus
-    @SuppressWarnings("unused")
-    public void onEvent(PersistenceEvents.UserCreateEvent event) {
+    @Subscribe
+    public void handleUserCreation(final PersistenceEvents.UserCreateEvent event) {
         this.patients = DB.patients().findAll();
         this.adapter.notifyDataSetChanged();
     }
 
     // Method called from the event bus
-    @SuppressWarnings("unused")
-    public void onEvent(PersistenceEvents.ActiveUserChangeEvent event) {
+    @Subscribe
+    public void handleActiveUserChange(final PersistenceEvents.ActiveUserChangeEvent event) {
         this.adapter.notifyDataSetChanged();
     }
 
@@ -168,7 +170,7 @@ public class PatientsActivity extends CalendulaActivity implements GridView.OnIt
                     public void onClick(DialogInterface dialog, int id) {
 
                         if (DB.patients().isActive(p, getApplicationContext())) {
-                            DB.patients().setActive(DB.patients().getDefault(), getApplicationContext());
+                            DB.patients().setActive(DB.patients().getDefault());
                         }
                         DB.patients().removeCascade(p);
                         notifyDataChange();
@@ -192,6 +194,7 @@ public class PatientsActivity extends CalendulaActivity implements GridView.OnIt
     private class PatientAdapter extends BaseAdapter {
 
 
+        private static final String TAG = "PatientAdapter";
         private Context context;
 
         public PatientAdapter(Context context) {
@@ -223,7 +226,7 @@ public class PatientsActivity extends CalendulaActivity implements GridView.OnIt
 
             final Patient p = (Patient) getItem(position);
 
-            Log.d("Patients", p.toString());
+            LogUtil.d(TAG, p.toString());
 
             boolean isActive = DB.patients().isActive(p, context);
 

@@ -25,7 +25,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +37,8 @@ import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -52,13 +53,14 @@ import es.usc.citius.servando.calendula.database.DB;
 import es.usc.citius.servando.calendula.events.PersistenceEvents;
 import es.usc.citius.servando.calendula.persistence.Schedule;
 import es.usc.citius.servando.calendula.util.IconUtils;
+import es.usc.citius.servando.calendula.util.LogUtil;
 
 /**
  * Created by joseangel.pineiro on 12/2/13.
  */
 public class ScheduleListFragment extends Fragment {
 
-    private static final String TAG = ScheduleListFragment.class.getSimpleName();
+    private static final String TAG = "ScheduleListFragment";
 
     List<Schedule> mSchedules;
     OnScheduleSelectedListener mScheduleSelectedCallback;
@@ -94,7 +96,7 @@ public class ScheduleListFragment extends Fragment {
     }
 
     public void notifyDataChange() {
-        Log.d(getTag(), "Schedules - Notify data change");
+        LogUtil.d(TAG, "Schedules - Notify data change");
         new ReloadItemsTask().execute();
     }
 
@@ -102,7 +104,7 @@ public class ScheduleListFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        Log.d(getTag(), "Activity "
+        LogUtil.d(TAG, "Activity "
                 + activity.getClass().getName()
                 + ", "
                 + (activity instanceof OnScheduleSelectedListener));
@@ -127,10 +129,9 @@ public class ScheduleListFragment extends Fragment {
 
     // Method called from the event bus
     @SuppressWarnings("unused")
-    public void onEvent(Object evt) {
-        if (evt instanceof PersistenceEvents.ActiveUserChangeEvent) {
-            notifyDataChange();
-        }
+    @Subscribe
+    public void handleActiveUserChange(final PersistenceEvents.ActiveUserChangeEvent event) {
+        notifyDataChange();
     }
 
     void showDeleteConfirmationDialog(final Schedule s) {
@@ -176,10 +177,10 @@ public class ScheduleListFragment extends Fragment {
             public boolean onClick(View v, IAdapter<ScheduleListItem> adapter, ScheduleListItem item, int position) {
                 Schedule s = item.getSchedule();
                 if (mScheduleSelectedCallback != null && s != null) {
-                    Log.d(getTag(), "Click at " + s.medicine().name() + " schedule");
+                    LogUtil.d(TAG, "Click at " + s.medicine().name() + " schedule");
                     mScheduleSelectedCallback.onScheduleSelected(s);
                 } else {
-                    Log.d(getTag(), "No callback set");
+                    LogUtil.d(TAG, "No callback set");
                 }
                 return true;
             }
@@ -207,7 +208,7 @@ public class ScheduleListFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             mSchedules = DB.schedules().findAllForActivePatient(getContext());
 
-            Log.d(TAG, "Schedules after reload: " + mSchedules.size());
+            LogUtil.d(TAG, "Schedules after reload: " + mSchedules.size());
             return null;
         }
 

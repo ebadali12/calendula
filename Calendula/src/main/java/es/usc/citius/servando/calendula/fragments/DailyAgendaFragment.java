@@ -30,7 +30,6 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +38,7 @@ import android.widget.ImageView;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.IIcon;
 
+import org.greenrobot.eventbus.Subscribe;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
@@ -65,6 +65,8 @@ import es.usc.citius.servando.calendula.persistence.ScheduleItem;
 import es.usc.citius.servando.calendula.util.DailyAgendaItemStub;
 import es.usc.citius.servando.calendula.util.DailyAgendaItemStub.DailyAgendaItemStubElement;
 import es.usc.citius.servando.calendula.util.IconUtils;
+import es.usc.citius.servando.calendula.util.LogUtil;
+import es.usc.citius.servando.calendula.util.PreferenceKeys;
 import es.usc.citius.servando.calendula.util.PreferenceUtils;
 
 /**
@@ -72,8 +74,7 @@ import es.usc.citius.servando.calendula.util.PreferenceUtils;
  */
 public class DailyAgendaFragment extends Fragment {
 
-    public static final String PREF_EXPANDED = "DailyAgendaFragment.expanded";
-    final String TAG = "DailyAgendaFragment";
+    private static final String TAG = "DailyAgendaFragment";
     View emptyView;
 
     LinearLayoutManager llm;
@@ -102,7 +103,7 @@ public class DailyAgendaFragment extends Fragment {
         setupRecyclerView();
         setupEmptyView();
 
-        boolean expanded = PreferenceUtils.instance().preferences().getBoolean(PREF_EXPANDED, false);
+        boolean expanded = PreferenceUtils.getBoolean(PreferenceKeys.HOME_DAILYAGENDA_EXPANDED, false);
         if (expanded != isExpanded()) {
             toggleViewMode();
             ((HomePagerActivity) getActivity()).appBarLayout.setExpanded(!expanded);
@@ -337,10 +338,10 @@ public class DailyAgendaFragment extends Fragment {
 
     public void notifyDataChange() {
         try {
-            Log.d(TAG, "AgendaView NotifyDataChange");
+            LogUtil.d(TAG, "AgendaView NotifyDataChange");
             items.clear();
             items.addAll(buildItems());
-            Log.d(TAG, "Items after rebuild " + items.size());
+            LogUtil.d(TAG, "Items after rebuild " + items.size());
             rvAdapter.notifyDataSetChanged();
             // show empty list view if there are no items
             rv.postDelayed(new Runnable() {
@@ -350,7 +351,7 @@ public class DailyAgendaFragment extends Fragment {
                 }
             }, 100);
         } catch (Exception e) {
-            Log.e(TAG, "Error onPostExecute", e);
+            LogUtil.e(TAG, "Error onPostExecute", e);
         }
     }
 
@@ -359,17 +360,14 @@ public class DailyAgendaFragment extends Fragment {
     }
 
     // Method called from the event bus
-    @SuppressWarnings("unused")
-    public void onEvent(final Object evt) {
-        if (evt instanceof HomeProfileMgr.BackgroundUpdatedEvent) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onBackgroundChange(HomeProfileMgr.colorForCurrent(getActivity()));
-                }
-            }, 500);
-
-        }
+    @Subscribe
+    public void handleBackgroundUpdatedEvent(final HomeProfileMgr.BackgroundUpdatedEvent event) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onBackgroundChange(HomeProfileMgr.colorForCurrent(getActivity()));
+            }
+        }, 500);
     }
 
     private void setupRecyclerView() {
@@ -476,7 +474,7 @@ public class DailyAgendaFragment extends Fragment {
             int firstPosition = llm.findFirstVisibleItemPosition();
             firstTime = firstPosition >= 0 && firstPosition < items.size() ? items.get(firstPosition).dateTime() : null;
 
-            Log.d(TAG, "OnBeforeCollapse, somethingVisible is " + somethingVisible);
+            LogUtil.d(TAG, "OnBeforeCollapse, somethingVisible is " + somethingVisible);
 
             if (expanded) {
                 showOrHideEmptyView(false);
@@ -489,7 +487,7 @@ public class DailyAgendaFragment extends Fragment {
 
         @Override
         public void onAfterToggleCollapse(boolean expanded, boolean somethingVisible) {
-            PreferenceUtils.instance().edit().putBoolean(PREF_EXPANDED, expanded).apply();
+            PreferenceUtils.edit().putBoolean(PreferenceKeys.HOME_DAILYAGENDA_EXPANDED.key(), expanded).apply();
             /*if (expanded && firstTime != null) {
                 scrollTo(firstTime);
                 firstTime = null;
