@@ -19,7 +19,7 @@
 package es.usc.citius.servando.calendula.persistence;
 
 
-import com.google.ical.compat.jodatime.DateTimeIterator;
+import com.google.ical.compat.jodatime.DateTimeIterable;
 import com.google.ical.compat.jodatime.DateTimeIteratorFactory;
 import com.google.ical.values.Frequency;
 import com.google.ical.values.RRule;
@@ -46,7 +46,6 @@ public class RepetitionRule {
 
     // cached value for week days
     private boolean[] days;
-    private String start;
 
     public RepetitionRule() {
         rrule = new RRule();
@@ -68,13 +67,6 @@ public class RepetitionRule {
         }
     }
 
-    public String getStart() {
-        return start;
-    }
-
-    public void setStart(String start) {
-        this.start = start;
-    }
 
     public Frequency getFrequency() {
         return rrule.getFreq();
@@ -117,27 +109,38 @@ public class RepetitionRule {
     }
 
 
-    public List<DateTime> occurrencesBetween(DateTime start, DateTime to, DateTime scheduleStart) {
+    public List<DateTime> occurrencesBetween(DateTime from, DateTime to, DateTime scheduleStart) {
         try {
-            // start iterating from a date before today, to avoid having the passed time
-            // as the first occurrence
-            DateTime iterateFrom = scheduleStart;//(start.isAfter(s.startDateTime()) ? start : s.startDateTime()).minusHours(s.rule().interval());
-            // to allow first occurrence at current hour, advance to the hour before it
-            DateTime firstOccurrence = (start.isAfter(scheduleStart) ? start : scheduleStart).minusMinutes(1);
 
             List<DateTime> occurrences = new ArrayList<>();
-            DateTimeIterator it = DateTimeIteratorFactory.createDateTimeIterator(rrule.toIcal(), iterateFrom, iterateFrom.getZone(), true);
-            // advance to the start of the interval
-            it.advanceTo(firstOccurrence);
-            // iterate until first date out of the interval
-            while (it.hasNext()) {
-                DateTime n = it.next().withZone(iterateFrom.getZone());
-                if (n.isBefore(to)) {
-                    occurrences.add(n);
-                } else {
+
+            if (from.isAfter(to)) {
+                throw new IllegalArgumentException("from > to");
+            }
+
+            if (to.isBefore(scheduleStart)) {
+                // Interval ends before the schedule start, so there are no ocurrences.
+                return occurrences;
+            }
+
+            DateTime iteratorStart;
+            if (scheduleStart.isAfter(from)) {
+                iteratorStart = scheduleStart;
+            } else {
+                iteratorStart = from.minusDays(1).withTime(scheduleStart.toLocalTime());
+            }
+            iteratorStart = iteratorStart.minusSeconds(1);
+
+            DateTimeIterable dates = DateTimeIteratorFactory.createDateTimeIterable(rrule.toIcal(), iteratorStart, iteratorStart.getZone(), true);
+
+            for (DateTime date : dates) {
+                if (date.isAfter(to)) {
                     break;
+                } else if (date.isAfter(from)) {
+                    occurrences.add(date);
                 }
             }
+
             return occurrences;
         } catch (ParseException e) {
             throw new RuntimeException("Error parsing ical", e);

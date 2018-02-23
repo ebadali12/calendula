@@ -25,6 +25,7 @@ import org.joda.time.LocalDate
 
 class MedicineScheduleStockProvider(val m: Medicine) : StockForDayProvider {
 
+    //TODO write tests for this class
     val schedules: List<Schedule>? by lazy { DB.schedules().findByMedicine(m) }
 
     override fun stockNeededForDay(date: LocalDate): Float {

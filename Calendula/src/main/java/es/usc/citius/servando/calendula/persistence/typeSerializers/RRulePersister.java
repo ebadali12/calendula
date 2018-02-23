@@ -53,9 +53,9 @@ public class RRulePersister extends BaseDataType {
     public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
         String data = (String) sqlArg;
         if (data.contains("$$$")) {
+            // legacy
             String[] parts = data.split("$$$");
-            RepetitionRule r = new RepetitionRule(parts[0]);
-            r.setStart(parts[1]);
+            return new RepetitionRule(parts[0]);
         }
         return new RepetitionRule((String) sqlArg);
     }
@@ -63,10 +63,6 @@ public class RRulePersister extends BaseDataType {
     @Override
     public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
         RepetitionRule rule = (RepetitionRule) javaObject;
-        String ical = rule.toIcal();
-        if (rule.getStart() != null) {
-            ical += "$$$" + rule.getStart();
-        }
-        return ical;
+        return rule.toIcal();
     }
 }
