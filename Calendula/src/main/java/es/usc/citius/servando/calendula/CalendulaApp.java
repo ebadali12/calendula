@@ -23,7 +23,6 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 
-import com.squareup.leakcanary.LeakCanary;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -40,7 +39,6 @@ import es.usc.citius.servando.calendula.database.DB;
 import es.usc.citius.servando.calendula.modules.ModuleManager;
 import es.usc.citius.servando.calendula.util.CloseableUtil;
 import es.usc.citius.servando.calendula.util.LogUtil;
-import es.usc.citius.servando.calendula.util.debug.StethoHelper;
 
 public class CalendulaApp extends MultiDexApplication {
 
@@ -124,16 +122,9 @@ public class CalendulaApp extends MultiDexApplication {
 
         if (!Build.FINGERPRINT.equals("robolectric")) {
             if (BuildConfig.DEBUG) {
-                new StethoHelper().init(this);
+             //   new StethoHelper().init(this);
             }
 
-            if (LeakCanary.isInAnalyzerProcess(CalendulaApp.this)) {
-                // This process is dedicated to LeakCanary for heap analysis.
-                return;
-            }
-
-            //initialize LeakCanary
-            LeakCanary.install(CalendulaApp.this);
         }
 
         final Context applicationContext = getApplicationContext();

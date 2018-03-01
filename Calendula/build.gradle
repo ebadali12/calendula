@@ -44,14 +44,6 @@ idea {
     }
 }
 
-// read keystore for app signing
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-def keystoreProperties = null
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties = new Properties()
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
 
 def getDate() {
     def date = new Date()
@@ -87,15 +79,6 @@ android {
         exclude 'LICENSE.txt'
     }
 
-    signingConfigs {
-        release {
-            keyAlias keystoreProperties != null ? keystoreProperties['keyAlias'] : null
-            keyPassword keystoreProperties != null ? keystoreProperties['keyPassword'] : null
-            storeFile keystoreProperties != null ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties != null ? keystoreProperties['storePassword'] : null
-        }
-    }
-
     testOptions {
         unitTests {
             includeAndroidResources = true
@@ -114,63 +97,19 @@ android {
             proguardFiles getCustomProguardFiles()
             testProguardFiles getDefaultProguardFile('proguard-android.txt')
             testProguardFiles getCustomProguardFiles()
-            signingConfig signingConfigs.release
-        }
-        debug {
-            debuggable true
-            minifyEnabled false
-            testCoverageEnabled true
-        }
-        beta {
-            minifyEnabled false
-            versionNameSuffix "-build" + getDate()
-        }
-        alpha {
-            minifyEnabled false
-            applicationIdSuffix ".alpha"
-            signingConfig signingConfigs.release
-            versionNameSuffix "-" + getDate()
         }
     }
-
-    flavorDimensions "buildType"
-
-    productFlavors {
-        develop {
-            applicationIdSuffix ".dev"
-            dimension "buildType"
-            minSdkVersion 21
-        }
-        product {
-            dimension "buildType"
-        }
-        ci {
-            dimension "buildType"
-            minSdkVersion 21
-        }
-    }
-
-    applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "${variant.name}-${variant.versionName}.apk"
-        }
-    }
-    compileOptions.incremental = false
 }
 
 dependencies {
 
     /********** DEBUGGING **********/
     // Chrome debug bridge
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     debugImplementation 'com.facebook.stetho:stetho:1.5.0'
 
     // Memory leak debugging
     //  1.5.2 held back because of a bug with gradle 3.0
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    alphaImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    betaImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
     /********** SUPPORT **********/
@@ -196,6 +135,9 @@ dependencies {
     androidTestImplementation "com.android.support:recyclerview-v7:$libVersions.android.support"
     androidTestImplementation "com.android.support:support-annotations:$libVersions.android.support"
     androidTestImplementation "com.android.support:support-v4:$libVersions.android.support"
+
+    compile 'com.google.android.gms:play-services-maps:11.8.0'
+    compile 'com.google.android.gms:play-services-location:11.8.0'
 
     /********** TESTING **********/
     // JUnit

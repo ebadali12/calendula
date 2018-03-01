@@ -69,7 +69,9 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
     public static final int TRAVELPLAN = 8;
     public static final int PHARMACIES = 9;
     public static final int ABOUT = 10;
+    public static final int DOCTORINFORMATION = 17;
 
+    public static final int NEARBYHOSPITAL = 16;
     public static final int PATIENT_ADD_PROFILE_ID = 15;
     public static final int CALENDAR = 12;
 
@@ -125,6 +127,19 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                         .withName(R.string.title_activity_patients)
                         .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_account_multiple, R.color.black).alpha(110))
                         .withIdentifier(PATIENTS),
+
+                new DividerDrawerItem(),
+
+                new PrimaryDrawerItem()
+                        .withName("Doctor Information")
+                        .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_hospital, R.color.black).alpha(110))
+                        .withIdentifier(DOCTORINFORMATION),
+
+                new PrimaryDrawerItem()
+                        .withName("Nearby Hospitals")
+                        .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_hospital_building, R.color.black).alpha(110))
+                        .withIdentifier(NEARBYHOSPITAL),
+
                 new DividerDrawerItem(),
                 new PrimaryDrawerItem()
                         .withName(R.string.title_activity_medicines)
@@ -154,12 +169,7 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                 new PrimaryDrawerItem()
                         .withName(R.string.drawer_settings_option)
                         .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_settings, R.color.black).alpha(110))
-                        .withIdentifier(SETTINGS),
-                new DividerDrawerItem(),
-                new PrimaryDrawerItem()
-                        .withName(R.string.drawer_about_option)
-                        .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_information, R.color.black).alpha(110))
-                        .withIdentifier(ABOUT)
+                        .withIdentifier(SETTINGS)
         );
 
         drawer = b.build();
@@ -204,12 +214,17 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                 launchActivity(new Intent(homeActivity, CalendulaSettingsActivity.class));
                 drawer.setSelection(HOME, false);
                 break;
-            case ABOUT:
-                showAbout();
-                drawer.setSelection(HOME, false);
-                break;
             case ALLERGIES:
                 launchActivity(new Intent(homeActivity, AllergiesActivity.class));
+                drawer.setSelection(HOME, false);
+                break;
+            case NEARBYHOSPITAL:
+                launchActivity(new Intent(homeActivity, NearByHospitalActivity.class));
+                drawer.setSelection(HOME, false);
+                break;
+
+            case DOCTORINFORMATION:
+                launchActivity(new Intent(homeActivity, DoctorDetailActivity.class));
                 drawer.setSelection(HOME, false);
                 break;
             default:

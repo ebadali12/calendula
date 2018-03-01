@@ -212,7 +212,7 @@ Please carefully read the leaflet or ask your pharmacist before you get behind t
 <string name="duration">"Duration"</string>
 <string name="all_meds_taken">"All meds taken!"</string>
 <string name="create_schedule_select_med_before_dose">"Please, select a med first"</string>
-<string name="title_activity_patients">"Patients"</string>
+<string name="title_activity_patients">"Users"</string>
 <string name="schedule_type_help_title">"You are about to create a schedule, choose the one that best suits your needs!"</string>
 <string name="schedule_type_routines_help">"This kind of schedule lets you bind intakes to your routines, such as: \"Every day at breakfast and dinner, excluding sundays\", or \"Every 3 days, with lunch.\""</string>
 <string name="schedule_type_hourly_help">"Hourly schedules are intended to those intakes that repeat by a certain period, such as: \"Every 8 hours\". Set the time of the first intake and go on."</string>
@@ -498,6 +498,6 @@ Do you want to install the new database now?
 <string name="manage_stock">"Manage stock"</string>
 <string name="message_generic_error">"Oops! There was an error."</string>
 <string name="ringtone_none">"None"</string>
-<string name="patient_add">"Add patient"</string>
+<string name="patient_add">"Add user"</string>
 <string name="db_download_and_setup">"Download and setup"</string>
 </resources>
