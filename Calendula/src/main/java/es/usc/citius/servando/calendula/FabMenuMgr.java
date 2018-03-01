@@ -132,28 +132,28 @@ public class FabMenuMgr implements View.OnClickListener {
         fabMenuSubViews = new ArrayList<>();
         fabMenuButtons = new ArrayList<>();
 
-        final View fabActionIntervalView = activity.findViewById(R.id.fab_action_interval);
+       // final View fabActionIntervalView = activity.findViewById(R.id.fab_action_interval);
         final View fabActionRoutinesView = activity.findViewById(R.id.fab_action_routines);
-        final View fabActionPeriodView = activity.findViewById(R.id.fab_action_period);
+       // final View fabActionPeriodView = activity.findViewById(R.id.fab_action_period);
 
-        fabMenuSubViews.add(fabActionPeriodView);
-        fabMenuSubViews.add(fabActionIntervalView);
+       // fabMenuSubViews.add(fabActionPeriodView);
+        //fabMenuSubViews.add(fabActionIntervalView);
         fabMenuSubViews.add(fabActionRoutinesView);
 
-        final FloatingActionButton fabActionInterval = (FloatingActionButton) activity.findViewById(R.id.fab_action_interval_button);
+        //final FloatingActionButton fabActionInterval = (FloatingActionButton) activity.findViewById(R.id.fab_action_interval_button);
         final FloatingActionButton fabActionRoutines = (FloatingActionButton) activity.findViewById(R.id.fab_action_routines_button);
-        final FloatingActionButton fabActionPeriod = (FloatingActionButton) activity.findViewById(R.id.fab_action_period_button);
+        //final FloatingActionButton fabActionPeriod = (FloatingActionButton) activity.findViewById(R.id.fab_action_period_button);
 
-        fabActionInterval.setOnClickListener(this);
+       // fabActionInterval.setOnClickListener(this);
         fabActionRoutines.setOnClickListener(this);
-        fabActionPeriod.setOnClickListener(this);
+        //fabActionPeriod.setOnClickListener(this);
 
-        fabActionInterval.setBackgroundTintList(ColorStateList.valueOf(DB.patients().getActive(activity).getColor()));
+      //  fabActionInterval.setBackgroundTintList(ColorStateList.valueOf(DB.patients().getActive(activity).getColor()));
         fabActionRoutines.setBackgroundTintList(ColorStateList.valueOf(DB.patients().getActive(activity).getColor()));
-        fabActionPeriod.setBackgroundTintList(ColorStateList.valueOf(DB.patients().getActive(activity).getColor()));
+        //fabActionPeriod.setBackgroundTintList(ColorStateList.valueOf(DB.patients().getActive(activity).getColor()));
 
-        fabMenuButtons.add(fabActionPeriod);
-        fabMenuButtons.add(fabActionInterval);
+        //fabMenuButtons.add(fabActionPeriod);
+        //fabMenuButtons.add(fabActionInterval);
         fabMenuButtons.add(fabActionRoutines);
 
 

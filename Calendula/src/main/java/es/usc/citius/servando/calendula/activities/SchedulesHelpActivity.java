@@ -48,11 +48,6 @@ public class SchedulesHelpActivity extends IntroActivity {
                 .backgroundDark(R.color.schedule_help_background_dark)
                 .build());
 
-        addSlide(new SimpleSlide.Builder()
-                .layout(R.layout.schedules_help_3)
-                .background(R.color.schedule_help_background)
-                .backgroundDark(R.color.schedule_help_background_dark)
-                .build());
     }
 
     @Override
