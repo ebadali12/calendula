@@ -162,6 +162,7 @@ public class NearByHospitalActivity extends AppCompatActivity implements android
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         nearByFabButton.setOnClickListener(nearByFabButtonListener);
+        nearByFabButton.setVisibility(View.INVISIBLE);
     }
 
     private void checkGpsNetwork() {
@@ -209,6 +210,8 @@ public class NearByHospitalActivity extends AppCompatActivity implements android
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                nearByFabButton.setVisibility(View.VISIBLE);
 
 
             }

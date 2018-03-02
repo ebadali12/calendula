@@ -62,9 +62,10 @@
                     android:id="@+id/addressInputEditTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="14dp"
                     android:singleLine="true"
                     android:textColor="@color/dark_grey_home" />
 
@@ -84,9 +85,11 @@
                     android:id="@+id/ninInputEditTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:maxLength="11"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="14dp"
                     android:singleLine="true"
                     android:textColor="@color/dark_grey_home" />
             </android.support.design.widget.TextInputLayout>
@@ -105,8 +108,9 @@
                     android:id="@+id/phoneNumberInputEditTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:inputType="phone"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="14dp"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:textColor="@color/dark_grey_home" />
@@ -125,7 +129,8 @@
                     android:id="@+id/doctorInfoInputEditTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="14dp"
                     android:inputType="textMultiLine"
                     android:textColor="@color/dark_grey_home" />
             </android.support.design.widget.TextInputLayout>
@@ -144,6 +149,7 @@
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:text="Done"
+
                 android:textColor="@color/white"
                 android:visibility="visible"
                 app:backgroundTint="@color/dark_grey_home" />

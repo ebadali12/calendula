@@ -172,11 +172,6 @@ public class DoctorDetailActivity extends AppCompatActivity {
 
             if (!address.equals(addressP) || !nin.equals(ninP) || !phoneNumber.equals(phoneNumberP) || !doctorInfo.equals(doctorInfoP)) {
 
-                Log.e("shit", address + " " + addressP);
-                Log.e("shit", nin + " " + ninP);
-                Log.e("shit", phoneNumber + " " + phoneNumberP);
-                Log.e("shit", doctorInfo + " " + doctorInfoP);
-
                 userPersonalInformation.logoutUser();
                 userPersonalInformation = null;
 
