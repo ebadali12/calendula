@@ -259,14 +259,16 @@ public class NearByHospitalActivity extends AppCompatActivity implements android
 
             String value = "hospital";
 
-            googleMap.clear();
-            String url = getUrl(lat, lng, value);
-            Object[] DataTransfer = new Object[2];
-            DataTransfer[0] = googleMap;
-            DataTransfer[1] = url;
+            if (googleMap != null) {
+                googleMap.clear();
+                String url = getUrl(lat, lng, value);
+                Object[] DataTransfer = new Object[2];
+                DataTransfer[0] = googleMap;
+                DataTransfer[1] = url;
 
-            GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-            getNearbyPlacesData.execute(DataTransfer);
+                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+                getNearbyPlacesData.execute(DataTransfer);
+            }
         }
     };
 
@@ -275,8 +277,7 @@ public class NearByHospitalActivity extends AppCompatActivity implements android
         if (requestCode == REQUEST_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (!gps_enabled) {
                 requestforLocation();
-            }
-            else {
+            } else {
                 setUpMap();
             }
         } else {

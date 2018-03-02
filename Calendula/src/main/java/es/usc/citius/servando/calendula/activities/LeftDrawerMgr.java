@@ -131,7 +131,7 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                 new DividerDrawerItem(),
 
                 new PrimaryDrawerItem()
-                        .withName("Doctor Information")
+                        .withName("Personal Information")
                         .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_hospital, R.color.black).alpha(110))
                         .withIdentifier(DOCTORINFORMATION),
 
