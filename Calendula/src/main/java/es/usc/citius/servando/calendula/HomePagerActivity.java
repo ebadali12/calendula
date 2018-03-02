@@ -142,6 +142,10 @@ public class HomePagerActivity extends CalendulaActivity implements
     private Queue<Object> pendingEvents = new LinkedList<>();
     private Handler handler;
 
+    UserPersonalInformation userPersonalInformation;
+
+
+
     private SparseArray<MenuItem> menuItems;
 
     @ColorInt
@@ -400,6 +404,14 @@ public class HomePagerActivity extends CalendulaActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+
+        userPersonalInformation = new UserPersonalInformation(getApplicationContext());
+
+        if(!userPersonalInformation.isUserLoggedIn())
+        {
+            userPersonalInformation.createUserSession("Address", "NIN", "Phone Number","Doctor Information");
+        }
 
         setupToolbar(null, Color.TRANSPARENT);
         initializeDrawer(savedInstanceState);

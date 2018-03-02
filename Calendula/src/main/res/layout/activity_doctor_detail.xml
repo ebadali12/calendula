@@ -116,7 +116,7 @@
                 android:id="@+id/doctorInfoTextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone Number"
+                android:hint="Doctor Information"
                 android:orientation="vertical"
                 android:textColorHint="#95989A"
                 app:errorEnabled="true">
@@ -127,7 +127,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:inputType="textMultiLine"
-
                     android:textColor="@color/dark_grey_home" />
             </android.support.design.widget.TextInputLayout>
 
