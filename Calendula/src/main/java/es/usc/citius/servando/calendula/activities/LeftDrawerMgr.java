@@ -72,6 +72,7 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
     public static final int DOCTORINFORMATION = 17;
 
     public static final int NEARBYHOSPITAL = 16;
+    public static final int SEARCHTREATMENT = 18;
     public static final int PATIENT_ADD_PROFILE_ID = 15;
     public static final int CALENDAR = 12;
 
@@ -139,6 +140,11 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                         .withName("Nearby Hospitals")
                         .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_hospital_building, R.color.black).alpha(110))
                         .withIdentifier(NEARBYHOSPITAL),
+
+                new PrimaryDrawerItem()
+                        .withName("Search Treatment")
+                        .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_search_web, R.color.black).alpha(110))
+                        .withIdentifier(SEARCHTREATMENT),
 
                 new DividerDrawerItem(),
                 new PrimaryDrawerItem()
@@ -227,6 +233,12 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                 launchActivity(new Intent(homeActivity, DoctorDetailActivity.class));
                 drawer.setSelection(HOME, false);
                 break;
+
+            case SEARCHTREATMENT:
+                launchActivity(new Intent(homeActivity, SearchTreatmentActivity.class));
+                drawer.setSelection(HOME, false);
+                break;
+
             default:
                 return false;
         }

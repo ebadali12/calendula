@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/status_bar_height"
+    tools:context="es.usc.citius.servando.calendula.activities.SearchTreatmentActivity">
+
+    <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_grey_home"
+        android:title="Search Treatment"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="-7dp"
+        android:indeterminate="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/loadingProgressBar"
+            android:layout_height="wrap_content" />
+
+
+</RelativeLayout>
