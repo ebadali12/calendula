@@ -166,7 +166,7 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                     .withIdentifier(ALLERGIES));
         }
 
-        b.addDrawerItems(
+      /*  b.addDrawerItems(
                 new DividerDrawerItem(),
                 new PrimaryDrawerItem()
                         .withName(R.string.drawer_help_option)
@@ -176,7 +176,7 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                         .withName(R.string.drawer_settings_option)
                         .withIcon(IconUtils.icon(homeActivity, CommunityMaterial.Icon.cmd_settings, R.color.black).alpha(110))
                         .withIdentifier(SETTINGS)
-        );
+        );*/
 
         drawer = b.build();
 
@@ -216,10 +216,10 @@ public class LeftDrawerMgr implements Drawer.OnDrawerItemClickListener, AccountH
                 launchActivity(new Intent(homeActivity, PatientsActivity.class));
                 drawer.setSelection(HOME, false);
                 break;
-            case SETTINGS:
+           /* case SETTINGS:
                 launchActivity(new Intent(homeActivity, CalendulaSettingsActivity.class));
                 drawer.setSelection(HOME, false);
-                break;
+                break;*/
             case ALLERGIES:
                 launchActivity(new Intent(homeActivity, AllergiesActivity.class));
                 drawer.setSelection(HOME, false);

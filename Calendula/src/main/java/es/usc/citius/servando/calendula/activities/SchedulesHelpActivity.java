@@ -47,7 +47,6 @@ public class SchedulesHelpActivity extends IntroActivity {
                 .background(R.color.schedule_help_background)
                 .backgroundDark(R.color.schedule_help_background_dark)
                 .build());
-
     }
 
     @Override
@@ -55,5 +54,4 @@ public class SchedulesHelpActivity extends IntroActivity {
         super.onResume();
         PreferenceUtils.edit().putBoolean(PreferenceKeys.SCHEDULES_HELP_SHOWN.key(), true).apply();
     }
-
 }
